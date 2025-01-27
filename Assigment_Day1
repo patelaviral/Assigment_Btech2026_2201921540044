@@ -1,0 +1,183 @@
+question 1-> 
+3434. Maximum Frequency After Subarray Operation
+You are given an array nums of length n. You are also given an integer k.
+
+You perform the following operation on nums once:
+
+Select a 
+subarray
+ nums[i..j] where 0 <= i <= j <= n - 1.
+Select an integer x and add x to all the elements in nums[i..j].
+Find the maximum frequency of the value k after the operation.
+
+solution-
+class Solution {
+    public int maxFrequency(int[] nums, int k) {
+        int count = 0;
+        for(int ele: nums){
+            if(ele == k){
+                count++;
+            }
+        }
+        int ans = 0;
+        for(int i = 1;i < 51;i++){
+            if(i == k){
+                continue;
+            }
+            int currNo = 0;
+            int tempNo = 0;
+            for(int ele: nums){
+                if(ele == i){
+                    currNo++;
+                }
+                if(ele == k){
+                    currNo--;
+                }
+                if(currNo < 0){
+                    currNo = 0;
+                }
+                if(tempNo < currNo){
+                    tempNo = currNo;
+                }
+            }
+            ans = Math.max(ans, tempNo);
+        }
+        return ans+count;
+    }
+}
+
+question 2->
+538. Convert BST to Greater Tree
+Given the root of a Binary Search Tree (BST), convert it to a Greater Tree such that every key of the original BST is changed to the original key plus the sum of all keys greater than the original key in BST.
+
+As a reminder, a binary search tree is a tree that satisfies these constraints:
+
+The left subtree of a node contains only nodes with keys less than the node's key.
+The right subtree of a node contains only nodes with keys greater than the node's key.
+Both the left and right subtrees must also be binary search trees.
+
+solution-
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode convertBST(TreeNode root) {
+        int val = maker(root);
+        return root;
+    }
+    int max = 0;
+    public int maker(TreeNode node){
+        if(node == null){
+            return max;
+        }
+        int right = maker(node.right);
+        node.val += right;
+        max = node.val;
+        int left = maker(node.left);
+        return node.val;
+    }
+}
+
+question 3->
+
+1678. Goal Parser Interpretation
+You own a Goal Parser that can interpret a string command. The command consists of an alphabet of "G", "()" and/or "(al)" in some order. The Goal Parser will interpret "G" as the string "G", "()" as the string "o", and "(al)" as the string "al". The interpreted strings are then concatenated in the original order.
+
+Given the string command, return the Goal Parser's interpretation of command.
+class Solution {
+    public String interpret(String command) {
+        StringBuilder op = new StringBuilder();
+        for(int i = 0;i < command.length();i++){
+            if(command.charAt(i) == '('){
+                if(command.charAt(i+1) == ')'){
+                    op.append('o');
+                    i++;
+                }
+            }
+            else if(command.charAt(i) != ')'){
+                op.append(command.charAt(i));
+            }
+        }
+        return op.toString();
+    }
+}
+
+SQL
+
+question 1->
+
+Write a solution to find the names of all the salespersons who did not have any orders related to the company with the name "RED".
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+SalesPerson table:
++----------+------+--------+-----------------+------------+
+| sales_id | name | salary | commission_rate | hire_date  |
++----------+------+--------+-----------------+------------+
+| 1        | John | 100000 | 6               | 4/1/2006   |
+| 2        | Amy  | 12000  | 5               | 5/1/2010   |
+| 3        | Mark | 65000  | 12              | 12/25/2008 |
+| 4        | Pam  | 25000  | 25              | 1/1/2005   |
+| 5        | Alex | 5000   | 10              | 2/3/2007   |
++----------+------+--------+-----------------+------------+
+Company table:
++--------+--------+----------+
+| com_id | name   | city     |
++--------+--------+----------+
+| 1      | RED    | Boston   |
+| 2      | ORANGE | New York |
+| 3      | YELLOW | Boston   |
+| 4      | GREEN  | Austin   |
++--------+--------+----------+
+Orders table:
++----------+------------+--------+----------+--------+
+| order_id | order_date | com_id | sales_id | amount |
++----------+------------+--------+----------+--------+
+| 1        | 1/1/2014   | 3      | 4        | 10000  |
+| 2        | 2/1/2014   | 4      | 5        | 5000   |
+| 3        | 3/1/2014   | 1      | 1        | 50000  |
+| 4        | 4/1/2014   | 1      | 4        | 25000  |
++----------+------------+--------+----------+--------+
+Output: 
++------+
+| name |
++------+
+| Amy  |
+| Mark |
+| Alex |
++------+
+Explanation: 
+According to orders 3 and 4 in the Orders table, it is easy to tell that only salesperson John and Pam have sales to company RED, so we report all the other names in the table salesperson.
+
+solution-
+
+# Write your MySQL query statement below
+With cte as
+(Select sales_id
+From Orders o
+Left join Company c
+ON o.com_id = c.com_id
+Where c.name LIKE 'RED')
+
+Select name
+From SalesPerson 
+Where sales_id Not IN(Select Distinct sales_id From cte)
