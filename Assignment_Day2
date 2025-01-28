@@ -1,0 +1,280 @@
+question 1)
+508. Most Frequent Subtree Sum
+
+Given the root of a binary tree, return the most frequent subtree sum. If there is a tie, return all the values with the highest frequency in any order.
+
+The subtree sum of a node is defined as the sum of all the node values formed by the subtree rooted at that node (including the node itself).
+
+ 
+
+Example 1:
+
+
+Input: root = [5,2,-3]
+Output: [2,-3,4]
+Example 2:
+
+
+Input: root = [5,2,-5]
+Output: [2]
+
+solution->
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int[] findFrequentTreeSum(TreeNode root) {
+        calculating(root);
+        List<Integer> op = new ArrayList<>();
+        int freq = 0;
+        for(int ele: collect.keySet()){
+            if(freq == collect.get(ele)){
+                op.add(ele);
+            }
+            else if(freq < collect.get(ele)){
+                op.clear();
+                op.add(ele);
+                freq = collect.get(ele);
+            }
+        }
+        int[] arr = new int[op.size()];
+        for(int i = 0;i < op.size();i++){
+            arr[i] = op.get(i);
+        }
+        return arr;
+    }
+    HashMap<Integer, Integer> collect = new HashMap<>();
+    public int calculating(TreeNode root){
+        if(root == null){
+            return 0;
+        }
+        int left = calculating(root.left);
+        int right = calculating(root.right);
+        int val = left+right+root.val;
+        collect.put(val, collect.getOrDefault(val, 0)+1);
+        return val;
+    }
+}
+
+question 2)
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course ai first if you want to take course bi.
+
+For example, the pair [0, 1] indicates that you have to take course 0 before you can take course 1.
+Prerequisites can also be indirect. If course a is a prerequisite of course b, and course b is a prerequisite of course c, then course a is a prerequisite of course c.
+
+You are also given an array queries where queries[j] = [uj, vj]. For the jth query, you should answer whether course uj is a prerequisite of course vj or not.
+
+Return a boolean array answer, where answer[j] is the answer to the jth query.
+
+ 
+
+Example 1:
+
+
+Input: numCourses = 2, prerequisites = [[1,0]], queries = [[0,1],[1,0]]
+Output: [false,true]
+Explanation: The pair [1, 0] indicates that you have to take course 1 before you can take course 0.
+Course 0 is not a prerequisite of course 1, but the opposite is true.
+Example 2:
+
+Input: numCourses = 2, prerequisites = [], queries = [[1,0],[0,1]]
+Output: [false,false]
+Explanation: There are no prerequisites, and each course is independent.
+Example 3:
+
+
+Input: numCourses = 3, prerequisites = [[1,2],[1,0],[2,0]], queries = [[1,0],[1,2]]
+Output: [true,true]
+
+solution ->
+import java.util.*;
+
+class Solution {
+    public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
+        boolean[][] visited = new boolean[numCourses][numCourses];
+        for (int[] pair : prerequisites) {
+            visited[pair[0]][pair[1]] = true;
+        }
+        for (int k = 0; k < numCourses; k++) {
+            for (int i = 0; i < numCourses; i++) {
+                for (int j = 0; j < numCourses; j++) {
+                    visited[i][j] = visited[i][j] || (visited[i][k] && visited[k][j]);
+                }
+            }
+        }
+        List<Boolean> result = new ArrayList<>();
+        for (int[] query : queries) {
+            result.add(visited[query[0]][query[1]]);
+        }
+        return result;
+    }
+}
+
+question 3)
+
+3408. Design Task Manager
+There is a task management system that allows users to manage their tasks, each associated with a priority. The system should efficiently handle adding, modifying, executing, and removing tasks.
+
+Implement the TaskManager class:
+
+TaskManager(vector<vector<int>>& tasks) initializes the task manager with a list of user-task-priority triples. Each element in the input list is of the form [userId, taskId, priority], which adds a task to the specified user with the given priority.
+
+void add(int userId, int taskId, int priority) adds a task with the specified taskId and priority to the user with userId. It is guaranteed that taskId does not exist in the system.
+
+void edit(int taskId, int newPriority) updates the priority of the existing taskId to newPriority. It is guaranteed that taskId exists in the system.
+
+void rmv(int taskId) removes the task identified by taskId from the system. It is guaranteed that taskId exists in the system.
+
+int execTop() executes the task with the highest priority across all users. If there are multiple tasks with the same highest priority, execute the one with the highest taskId. After executing, the taskId is removed from the system. Return the userId associated with the executed task. If no tasks are available, return -1.
+
+Note that a user may be assigned multiple tasks.
+
+ 
+
+Example 1:
+
+Input:
+["TaskManager", "add", "edit", "execTop", "rmv", "add", "execTop"]
+[[[[1, 101, 10], [2, 102, 20], [3, 103, 15]]], [4, 104, 5], [102, 8], [], [101], [5, 105, 15], []]
+
+Output:
+[null, null, null, 3, null, null, 5]
+
+Explanation
+
+TaskManager taskManager = new TaskManager([[1, 101, 10], [2, 102, 20], [3, 103, 15]]); // Initializes with three tasks for Users 1, 2, and 3.
+taskManager.add(4, 104, 5); // Adds task 104 with priority 5 for User 4.
+taskManager.edit(102, 8); // Updates priority of task 102 to 8.
+taskManager.execTop(); // return 3. Executes task 103 for User 3.
+taskManager.rmv(101); // Removes task 101 from the system.
+taskManager.add(5, 105, 15); // Adds task 105 with priority 15 for User 5.
+taskManager.execTop(); // return 5. Executes task 105 for User 5.
+
+solutionclass TaskManager {
+
+    HashMap<Integer, int[]> collect;
+    PriorityQueue<int []> pq;
+    public TaskManager(List<List<Integer>> tasks) {
+        collect = new HashMap<>();
+        pq = new PriorityQueue<>((a, b) -> a[0] != b[0] ? b[0] - a[0] : b[1] - a[1]);
+        for(List<Integer> ele: tasks){
+            int[] arr = {ele.get(2), ele.get(1), ele.get(0)};
+            collect.put(ele.get(1), arr);
+            pq.add(arr);
+        }
+    }
+
+    public void add(int userId, int taskId, int priority) {
+        int[] arr = {priority, taskId, userId};
+        collect.put(taskId, arr);
+        pq.add(arr);
+    }
+
+    public void edit(int taskId, int newPriority) {
+        int[] arr = collect.get(taskId);
+        if(arr != null){
+            int[] array = {newPriority, arr[1], arr[2]};
+            arr[2] = -1;
+            collect.put(taskId, array);
+            pq.add(array);
+        }
+    }
+
+    public void rmv(int taskId) {
+        int[] arr = collect.get(taskId);
+        arr[2] = -1;
+        collect.remove(taskId);
+    }
+
+    public int execTop() {
+        while(!pq.isEmpty()){
+            int[] arr = pq.poll();
+            if(arr[2] != -1){
+                collect.remove(arr[1]);
+                return arr[2];
+            }
+        }
+        return -1;
+    }
+}
+
+/**
+ * Your TaskManager object will be instantiated and called as such:
+ * TaskManager obj = new TaskManager(tasks);
+ * obj.add(userId,taskId,priority);
+ * obj.edit(taskId,newPriority);
+ * obj.rmv(taskId);
+ * int param_4 = obj.execTop();
+ */ ->
+
+(SQL)
+
+question
+
+There is a queue of people waiting to board a bus. However, the bus has a weight limit of 1000 kilograms, so there may be some people who cannot board.
+
+Write a solution to find the person_name of the last person that can fit on the bus without exceeding the weight limit. The test cases are generated such that the first person does not exceed the weight limit.
+
+Note that only one person can board the bus at any given turn.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Queue table:
++-----------+-------------+--------+------+
+| person_id | person_name | weight | turn |
++-----------+-------------+--------+------+
+| 5         | Alice       | 250    | 1    |
+| 4         | Bob         | 175    | 5    |
+| 3         | Alex        | 350    | 2    |
+| 6         | John Cena   | 400    | 3    |
+| 1         | Winston     | 500    | 6    |
+| 2         | Marie       | 200    | 4    |
++-----------+-------------+--------+------+
+Output: 
++-------------+
+| person_name |
++-------------+
+| John Cena   |
++-------------+
+Explanation: The folowing table is ordered by the turn for simplicity.
++------+----+-----------+--------+--------------+
+| Turn | ID | Name      | Weight | Total Weight |
++------+----+-----------+--------+--------------+
+| 1    | 5  | Alice     | 250    | 250          |
+| 2    | 3  | Alex      | 350    | 600          |
+| 3    | 6  | John Cena | 400    | 1000         | (last person to board)
+| 4    | 2  | Marie     | 200    | 1200         | (cannot board)
+| 5    | 4  | Bob       | 175    | ___          |
+| 6    | 1  | Winston   | 500    | ___          |
++------+----+-----------+--------+--------------+
+
+solution ->
+# Write your MySQL query statement below
+With cte as
+(Select *, Sum(weight) Over (Order by turn Rows Between Unbounded 
+Preceding and Current Row) as total
+From Queue)
+
+Select person_name
+From cte
+Where total <= 1000
+Order by total DESC
+Limit 1
