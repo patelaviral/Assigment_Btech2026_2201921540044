@@ -1,0 +1,226 @@
+question 1)
+
+6. Zigzag Conversion
+Solved
+Medium
+Topics
+Companies
+The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+
+P   A   H   N
+A P L S I I G
+Y   I   R
+And then read line by line: "PAHNAPLSIIGYIR"
+
+Write the code that will take a string and make this conversion given a number of rows:
+
+string convert(string s, int numRows);
+ 
+
+Example 1:
+
+Input: s = "PAYPALISHIRING", numRows = 3
+Output: "PAHNAPLSIIGYIR"
+Example 2:
+
+Input: s = "PAYPALISHIRING", numRows = 4
+Output: "PINALSIGYAHRPI"
+Explanation:
+P     I    N
+A   L S  I G
+Y A   H R
+P     I
+Example 3:
+
+Input: s = "A", numRows = 1
+Output: "A"
+
+solution -> 
+
+class Solution {
+    public String convert(String s, int numRows) {
+        int len = s.length();
+        if(numRows >= len  || numRows == 1){
+            return s;
+        }
+        int dia = numRows-2;
+        int col = (len/(numRows+dia))+1;
+        int column = col*(dia+1);
+        char[][] arr = new char[numRows][column];
+        for(char[] ele: arr){
+            Arrays.fill(ele, '#');
+        }
+        int inx = 0;
+        int i = 0;
+        int j = 0;
+        while(inx < len){
+            for(int k = 0;k < numRows;k++) {
+                if(inx >= len){
+                    break;
+                }
+                arr[i][j] = s.charAt(inx);
+                inx++;
+                i++;
+            }
+            i--;
+            if(inx >= len){
+                break;
+            }
+            for(int k = 0;k < numRows-2;k++){
+                j++;
+                i--;
+                if(inx >= len){
+                    break;
+                }
+                arr[i][j] = s.charAt(inx);
+                inx++;
+            }
+            j++;
+            i--;
+        }
+        StringBuilder st = new StringBuilder();
+        for(char[] ele: arr){
+            for(char el: ele){
+                if(el != '#'){
+                    st.append(el);
+                }
+            }
+        }
+        return st.toString();
+    }
+}
+
+question 2)
+
+In this problem, a tree is an undirected graph that is connected and has no cycles.
+
+You are given a graph that started as a tree with n nodes labeled from 1 to n, with one additional edge added. The added edge has two different vertices chosen from 1 to n, and was not an edge that already existed. The graph is represented as an array edges of length n where edges[i] = [ai, bi] indicates that there is an edge between nodes ai and bi in the graph.
+
+Return an edge that can be removed so that the resulting graph is a tree of n nodes. If there are multiple answers, return the answer that occurs last in the input.
+
+ 
+
+Example 1:
+
+
+Input: edges = [[1,2],[1,3],[2,3]]
+Output: [2,3]
+Example 2:
+
+
+Input: edges = [[1,2],[2,3],[3,4],[1,4],[1,5]]
+Output: [1,4]
+
+sultion ->
+
+class Solution {
+    public int check(int res[],ArrayList<ArrayList<Integer>>adj,int src ,boolean visit[])
+    {
+    
+        visit[src]=true;
+
+        int count=0;
+        for(int node:adj.get(src))
+        {
+            if(visit[node]==false)
+            {
+                count+=1+check(res,adj,node,visit);
+            }
+        }
+        return count ;
+    }
+    public int[] findRedundantConnection(int[][] edges) 
+    {
+        int res[]=new int[2];
+
+        ArrayList<ArrayList<Integer>>adj=new ArrayList<>();
+
+        for(int i=0;i<=edges.length;i++)
+        adj.add(new ArrayList<>());
+        
+        for(int e[]:edges)
+        {
+            int s=e[0];
+            int end=e[1];
+
+            adj.get(s).add(end);
+            adj.get(end).add(s);
+        }
+
+        for(int i=1;i<=edges.length;i++)
+        {
+            int s=edges[edges.length-i][0];
+            int e=edges[edges.length-i][1];
+            adj.get(s).remove(Integer.valueOf(e));
+            adj.get(e).remove(Integer.valueOf(s));
+
+            boolean visit[]=new boolean[edges.length+1];
+            int count=check(res,adj,1,visit);
+            if(count ==edges.length-1)
+            {
+                res[0]=s;
+                res[1]=e;
+                return res;
+            }
+            adj.get(s).add(e);
+            adj.get(e).add(s);
+        }
+        return res;
+    }
+}
+
+question 3)
+
+Write an algorithm to determine if a number n is happy.
+
+A happy number is a number defined by the following process:
+
+Starting with any positive integer, replace the number by the sum of the squares of its digits.
+Repeat the process until the number equals 1 (where it will stay), or it loops endlessly in a cycle which does not include 1.
+Those numbers for which this process ends in 1 are happy.
+Return true if n is a happy number, and false if not.
+
+ 
+
+Example 1:
+
+Input: n = 19
+Output: true
+Explanation:
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+Example 2:
+
+Input: n = 2
+Output: false
+
+soltution ->
+
+class Solution {
+    public boolean isHappy(int n) {
+        ArrayList<Integer> op = new ArrayList<>();
+        int no = 0;
+        while(no != 1){
+            no = 0;
+            for(int i = 1;i > 0;i++){
+                int rem = n%10;
+                n = n/10;
+                no = no + rem*rem;
+                if(n <= 0){
+                    break;
+                }
+            }
+            for(int j = 0;j < op.size();j++){
+                if(op.get(j) == no){
+                    return false;
+                }
+            }
+            op.add(no);
+            n = no;
+        }
+        return true;
+    }
+}
+
