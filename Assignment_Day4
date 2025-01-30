@@ -1,0 +1,202 @@
+question 1)
+
+You are given a non-negative integer k. There exists a staircase with an infinite number of stairs, with the lowest stair numbered 0.
+
+Alice has an integer jump, with an initial value of 0. She starts on stair 1 and wants to reach stair k using any number of operations. If she is on stair i, in one operation she can:
+
+Go down to stair i - 1. This operation cannot be used consecutively or on stair 0.
+Go up to stair i + 2jump. And then, jump becomes jump + 1.
+Return the total number of ways Alice can reach stair k.
+
+Note that it is possible that Alice reaches the stair k, and performs some operations to reach the stair k again.
+
+ 
+
+Example 1:
+
+Input: k = 0
+
+Output: 2
+
+Explanation:
+
+The 2 possible ways of reaching stair 0 are:
+
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 20 stairs to reach stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Example 2:
+You are given a non-negative integer k. There exists a staircase with an infinite number of stairs, with the lowest stair numbered 0.
+
+Alice has an integer jump, with an initial value of 0. She starts on stair 1 and wants to reach stair k using any number of operations. If she is on stair i, in one operation she can:
+
+Go down to stair i - 1. This operation cannot be used consecutively or on stair 0.
+Go up to stair i + 2jump. And then, jump becomes jump + 1.
+Return the total number of ways Alice can reach stair k.
+
+Note that it is possible that Alice reaches the stair k, and performs some operations to reach the stair k again.
+
+ 
+
+Example 1:
+
+Input: k = 0
+
+Output: 2
+
+Explanation:
+
+The 2 possible ways of reaching stair 0 are:
+
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 20 stairs to reach stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Example 2:
+
+Input: k = 1
+
+Output: 4
+
+Explanation:
+
+The 4 possible ways of reaching stair 1 are:
+
+Alice starts at stair 1. Alice is at stair 1.
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 20 stairs to reach stair 1.
+Alice starts at stair 1.
+Using an operation of the second type, she goes up 20 stairs to reach stair 2.
+Using an operation of the first type, she goes down 1 stair to reach stair 1.
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 20 stairs to reach stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 21 stairs to reach stair 2.
+Using an operation of the first type, she goes down 1 stair to reach stair 1.
+Input: k = 1
+
+Output: 4
+
+Explanation:
+
+The 4 possible ways of reaching stair 1 are:
+
+Alice starts at stair 1. Alice is at stair 1.
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 20 stairs to reach stair 1.
+Alice starts at stair 1.
+Using an operation of the second type, she goes up 20 stairs to reach stair 2.
+Using an operation of the first type, she goes down 1 stair to reach stair 1.
+Alice starts at stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 20 stairs to reach stair 1.
+Using an operation of the first type, she goes down 1 stair to reach stair 0.
+Using an operation of the second type, she goes up 21 stairs to reach stair 2.
+Using an operation of the first type, she goes down 1 stair to reach stair 1.
+
+solution ->
+
+class Solution {
+    public int waysToReachStair(int k) {
+        long[][][] dp = new long[50][50][2];
+        for(long[][] ele1: dp){
+            for(long[] ele: ele1){
+                Arrays.fill(ele, -1);
+            }
+        }
+        return (int)calculating(1, 0,0, 0, k, dp);
+    }
+    public long calculating(int current, int flag, int jump, int bb, int tar, long[][][] dp){
+        if(current > tar+1){
+            return 0;
+        }
+        if(dp[bb][jump][flag] != -1){
+            return dp[bb][jump][flag];
+        }
+        long ans = 0;
+        if(current == tar){
+            ans++;
+        }
+        if(flag == 0){
+            ans += calculating(current-1, 1, jump, bb+1, tar, dp);
+            ans += calculating(current+(int) Math.pow(2, jump), 0, jump+1, bb, tar, dp);
+        }
+        else{
+            ans += calculating(current+(int) Math.pow(2, jump), 0, jump+1, bb, tar, dp);
+        }
+        return dp[bb][jump][flag] = ans;
+    }
+}
+
+question 2)
+
+You are given an array nums consisting of positive integers where all integers have the same number of digits.
+
+The digit difference between two integers is the count of different digits that are in the same position in the two integers.
+
+Return the sum of the digit differences between all pairs of integers in nums.
+
+ 
+
+Example 1:
+
+Input: nums = [13,23,12]
+
+Output: 4
+
+solution ->
+
+class Solution {
+    public long sumDigitDifferences(int[] nums) {
+        HashMap<Integer, int[]> collect = new HashMap<>();
+        int len = nums.length;
+        long res = 0;
+        int num = nums[0];
+        List<Integer> op = new ArrayList<>();
+        while(num != 0){
+            op.add(num%10);
+            num /= 10;
+        }
+        int n = op.size();
+        int[] arr = new int[n];
+        for(int i = 0;i < n;i++){
+            arr[i] = op.get(i);
+        }
+        collect.put(nums[0], arr);
+        for(int i = 1;i < len;i++){
+            if(!collect.containsKey(nums[i])){
+                int[] temp = new int[n];
+                num = nums[i];
+                int ind = 0;
+                while(num != 0){
+                    temp[ind] = num%10;
+                    num /= 10;
+                    ind++;
+                }
+                collect.put(nums[i], temp);
+            }
+        }
+        //System.out.println(n);
+        for(int i = 0;i < n;i++){
+            HashMap<Integer, Integer> oppo = new HashMap<>();
+            for(int ele: nums){
+                int[] temp = collect.get(ele);
+                for(int val: oppo.keySet()){
+                    if(val != temp[i]){
+                        res += oppo.get(val);
+                    }
+                }
+                oppo.put(temp[i], oppo.getOrDefault(temp[i], 0)+1);
+            }
+        }
+        return res;
+    }
+}
